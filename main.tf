@@ -73,7 +73,7 @@ resource "aws_cloudwatch_metric_alarm" "target-healthy-count" {
   alarm_description  = "Trigger an alert when ${var.tg_name} has 1 or more unhealthy hosts"
   alarm_actions      = ["${var.sns_arn}"]
   ok_actions         = ["${var.sns_arn}"]
-  treat_missing_data = "Breaching"
+  treat_missing_data = "breaching"
 }
 
 resource "aws_cloudwatch_metric_alarm" "target-500" {
