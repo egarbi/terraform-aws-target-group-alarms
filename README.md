@@ -9,7 +9,7 @@ An alarm will be triggered if:
 * if response code 5XX coming from the TG are greater than or equal to the configured threshold.
 * if response time value is greater than the configured threshold.
 
-> Note: Thresholds other than defaultis can be overwriten passing variabled as shown below.
+> Note: Thresholds other than defaults can be overwriten passing variables as shown below.
 
 
 Usage
