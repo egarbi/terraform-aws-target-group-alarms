@@ -17,9 +17,9 @@ Usage
 
 ```hcl
 module "ecs_services_alarms" {
-  source = "git::https://github.com/egarbi/terraform-aws-target-group-alarms?ref=0.0.1"
+  source = "git::https://github.com/egarbi/terraform-aws-target-group-alarms?ref=0.0.2"
 
-  tg_name         = "${var.name}-${terraform.env}"
+  tg_arn_suffix   = "${data.aws_lb_target_group.main.arn_suffix}"
   lb_arn          = "${data.terraform_remote_state.vpc.alb_arn}"
   sns_arn         = "${data.aws_sns_topic.main.arn}"
   // These 2 variables are optional, shown as an example with defaults values

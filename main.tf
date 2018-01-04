@@ -1,5 +1,5 @@
-variable "tg_name" {
-  description = "The Target Groups' Name for which you need to add alerts"
+variable "tg_arn_suffix" {
+  description = "The Target Groups' ARN Suffix for which you need to add alerts"
 }
 
 variable "lb_arn" {
@@ -8,10 +8,6 @@ variable "lb_arn" {
 
 variable "sns_arn" {
   description = "SNS associated with the email, slack, push service paging your Team"
-}
-
-data "aws_lb_target_group" "main" {
-  name = "${var.tg_name}"
 }
 
 data "aws_lb" "main" {
@@ -35,7 +31,7 @@ variable "500s_thresholds" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "target-response-time" {
-  alarm_name          = "${var.tg_name}-Response-Time"
+  alarm_name          = "${replace(var.tg_arn_suffix,"/(targetgroup/)|(/\\w+$)/","")}-Response-Time"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "TargetResponseTime"
@@ -46,17 +42,17 @@ resource "aws_cloudwatch_metric_alarm" "target-response-time" {
 
   dimensions {
     LoadBalancer = "${data.aws_lb.main.arn_suffix}"
-    TargetGroup  = "${data.aws_lb_target_group.main.arn_suffix}"
+    TargetGroup  = "${var.tg_arn_suffix}"
   }
 
-  alarm_description  = "Trigger an alert when response time in ${var.tg_name} goes high"
+  alarm_description  = "Trigger an alert when response time in ${var.tg_arn_suffix} goes high"
   alarm_actions      = ["${var.sns_arn}"]
   ok_actions         = ["${var.sns_arn}"]
   treat_missing_data = "notBreaching"
 }
 
 resource "aws_cloudwatch_metric_alarm" "target-healthy-count" {
-  alarm_name          = "${var.tg_name}-Healthy-Count"
+  alarm_name          = "${replace(var.tg_arn_suffix,"/(targetgroup/)|(/\\w+$)/","")}-Healthy-Count"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "HealthyHostCount"
@@ -67,17 +63,17 @@ resource "aws_cloudwatch_metric_alarm" "target-healthy-count" {
 
   dimensions {
     LoadBalancer = "${data.aws_lb.main.arn_suffix}"
-    TargetGroup  = "${data.aws_lb_target_group.main.arn_suffix}"
+    TargetGroup  = "${var.tg_arn_suffix}"
   }
 
-  alarm_description  = "Trigger an alert when ${var.tg_name} has 1 or more unhealthy hosts"
+  alarm_description  = "Trigger an alert when ${var.tg_arn_suffix} has 1 or more unhealthy hosts"
   alarm_actions      = ["${var.sns_arn}"]
   ok_actions         = ["${var.sns_arn}"]
   treat_missing_data = "breaching"
 }
 
 resource "aws_cloudwatch_metric_alarm" "target-500" {
-  alarm_name          = "${replace(var.tg_name,"/(targetgroup/)|(/\\w+$)/","")}-HTTP-5XX"
+  alarm_name          = "${replace(var.tg_arn_suffix,"/(targetgroup/)|(/\\w+$)/","")}-HTTP-5XX"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "HTTPCode_Target_5XX_Count"
@@ -88,10 +84,10 @@ resource "aws_cloudwatch_metric_alarm" "target-500" {
 
   dimensions {
     LoadBalancer = "${data.aws_lb.main.arn_suffix}"
-    TargetGroup  = "${data.aws_lb_target_group.main.arn_suffix}"
+    TargetGroup  = "${var.tg_arn_suffix}"
   }
 
-  alarm_description  = "Trigger an alert when 5XX's in ${var.tg_name} goes high"
+  alarm_description  = "Trigger an alert when 5XX's in ${var.tg_arn_suffix} goes high"
   alarm_actions      = ["${var.sns_arn}"]
   ok_actions         = ["${var.sns_arn}"]
   treat_missing_data = "notBreaching"
