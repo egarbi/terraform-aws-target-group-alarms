@@ -22,11 +22,11 @@ variable "time_response_thresholds" {
  }
 }
 
-variable "500s_thresholds" {
+variable "5XXs_thresholds" {
   default = {
     period              = "60" //Seconds
     statistic           = "Average"
-    threshold           = "1" //Seconds
+    threshold           = "1" //Count
  }
 }
 
@@ -78,9 +78,9 @@ resource "aws_cloudwatch_metric_alarm" "target-500" {
   evaluation_periods  = "1"
   metric_name         = "HTTPCode_Target_5XX_Count"
   namespace           = "AWS/ApplicationELB"
-  period              = "${lookup(var.500s_thresholds, "period")}"
-  statistic           = "${lookup(var.500s_thresholds, "statistic")}"
-  threshold           = "${lookup(var.500s_thresholds, "threshold")}"
+  period              = "${lookup(var.5XXs_thresholds, "period")}"
+  statistic           = "${lookup(var.5XXs_thresholds, "statistic")}"
+  threshold           = "${lookup(var.5XXs_thresholds, "threshold")}"
 
   dimensions {
     LoadBalancer = "${data.aws_lb.main.arn_suffix}"
