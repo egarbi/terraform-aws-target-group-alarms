@@ -28,7 +28,7 @@ module "ecs_services_alarms" {
     statistic = "Average" 
     threshold = "30" 
   } 
-  5XXs_thresholds = {
+  fiveXXs_thresholds = {
     period = "60"
     statistic = "Average"
     threshold = "1"
